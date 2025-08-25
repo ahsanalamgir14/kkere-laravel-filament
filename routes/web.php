@@ -26,6 +26,8 @@ use App\Livewire\Reservation\Purchases\ViewPurchase;
 use App\Livewire\User\MyAccount;
 use App\Livewire\User\PageDetail;
 use App\Livewire\User\Contact;
+use App\Livewire\User\UserFeedback;
+use App\Livewire\User\MyFeedback;
 use Illuminate\Support\Facades\Route;
 
 /*
@@ -54,6 +56,7 @@ Route::group([], function () {
     Route::get('/pages/{page:slug}', PageDetail::class)->name('page-details');
     Route::get('/contact', Contact::class)->name('contact');
     Route::get('/profile/{slug}/{id}', ViewProfile::class)->name('view-profile');
+    Route::get('/feedback/{id}', UserFeedback::class)->name('feedback');
     // Route::get('/location/{location}/{category}/{subcategory?}', AdList::class)->name('location-category');
     Route::get('/notification/register', Registration::class);
 });
@@ -66,6 +69,7 @@ Route::middleware(['auth', 'verified'])->group(function () {
     Route::get('/my-messages', MyMessages::class)->name('my-messages');
     Route::get('/my-profile', MyProfile::class)->name('my-profile');
     Route::get('/my-favorites', MyFavorites::class)->name('my-favorites');
+    Route::get('/my-feedback', MyFeedback::class)->name('my-feedback');
     Route::get('/verification-required', VerificationRequired::class)->name('verification-required');
     Route::get('/ad-modifications/{id}', AdModifications::class)->name('ad-modifications');
     Route::post('/check-can-message', [ChatifyController::class, 'canReceiveMessage'])->name('check-can-message');
@@ -88,7 +92,6 @@ Route::group([], function () {
     Route::get('/ad/{slug}', AdOverview::class)->name('ad.overview');
     Route::get('/categories/{category?}/{subCategory?}/{childCategory?}', AdTypeCollection::class)->name('categories.collection');
     Route::get('/search', AdTypeCollection::class)->name('search');
-
 });
 
 Route::group(['prefix' => 'reservation/callback/payment', 'middleware' => ['auth', 'verified']], function () {
