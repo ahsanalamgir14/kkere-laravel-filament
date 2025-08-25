@@ -1,0 +1,36 @@
+{
+  "_@alpinejs-c35b6e91.js": {
+    "file": "assets/@alpinejs-c35b6e91.js"
+  },
+  "_alpinejs-a89a43e5.js": {
+    "file": "assets/alpinejs-a89a43e5.js"
+  },
+  "_axios-4a70c6fc.js": {
+    "file": "assets/axios-4a70c6fc.js"
+  },
+  "resources/css/app.css": {
+    "file": "assets/app-34de7282.css",
+    "isEntry": true,
+    "src": "resources/css/app.css"
+  },
+  "resources/css/filament/admin/theme.css": {
+    "file": "assets/theme-3880e849.css",
+    "isEntry": true,
+    "src": "resources/css/filament/admin/theme.css"
+  },
+  "resources/css/filament/app/theme.css": {
+    "file": "assets/theme-8f5874d0.css",
+    "isEntry": true,
+    "src": "resources/css/filament/app/theme.css"
+  },
+  "resources/js/app.js": {
+    "file": "assets/app-cfde7b19.js",
+    "imports": [
+      "_axios-4a70c6fc.js",
+      "_alpinejs-a89a43e5.js",
+      "_@alpinejs-c35b6e91.js"
+    ],
+    "isEntry": true,
+    "src": "resources/js/app.js"
+  }
+}

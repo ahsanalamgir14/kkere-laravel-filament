@@ -1,0 +1,31 @@
+{
+    "build_version": "7",
+    "root_path": "source-code",
+    "code_path": {
+        "app": "document",
+        "config": "document",
+        "bootstrap": "document",
+        "vendor": "document",
+        "resources": "document",
+        "database": "document",
+        "routes": "document",
+        "vendor/adfox": "document",
+        "vendor/autoload.php": "file",
+        "app-modules": "document",
+        "base-lang": "document",
+        "public/build": "document",
+        "public/css": "document",
+        "public/js": "document",
+        "public/sounds": "document",
+        "public/media/pwa": "document",
+        "public/images/error.svg": "file",
+        "public/images/watermark.png": "file",
+        "public/images/offer.svg": "file",
+        "public/images/no-plan.svg": "file",
+        "public/css/bezhansalleh/filament-language-switch": "document",
+        "composer.json": "file",
+        "composer.lock": "file",
+        "package.json": "file",
+        "tailwind.config.js": "file"
+    }
+}

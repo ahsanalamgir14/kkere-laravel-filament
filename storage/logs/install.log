@@ -1,0 +1,106 @@
+25-08-2025 18:44:44, Step-1: Purchase Key validation start 
+
+25-08-2025 18:44:44, Purchase Key: Starting purchase code validation 
+
+25-08-2025 18:44:49, Step-1: PHP Version and Extensions check start 
+
+25-08-2025 18:44:49, Step-1: Directory Permissions check start 
+
+25-08-2025 18:44:49, Step-1: Media Permissions 
+
+25-08-2025 18:44:49, Step-1: Framework/sessions Permissions 
+
+25-08-2025 18:44:49, Step-1: Initial validation completed 
+
+25-08-2025 18:45:14, Step-2: Database connection check initiated 
+
+25-08-2025 18:45:14, Step-2: Configuring database settings 
+
+25-08-2025 18:45:14, Step-2: Database connection successful 
+
+25-08-2025 18:45:14, Step-2: Updating environment variables 
+
+25-08-2025 18:45:14, ENV: Write start from saveENV 
+
+25-08-2025 18:45:14, ENV: Write start from setEnvValue 
+
+25-08-2025 18:45:14, ENV Write start: APP_URL=>http://kkere.test 
+
+25-08-2025 18:45:14, ENV Write END: APP_URL=>http://kkere.test 
+
+25-08-2025 18:45:14, ENV Write start: DB_HOST=>127.0.0.1 
+
+25-08-2025 18:45:14, ENV Write END: DB_HOST=>127.0.0.1 
+
+25-08-2025 18:45:14, ENV Write start: DB_DATABASE=>kkere 
+
+25-08-2025 18:45:14, ENV Write END: DB_DATABASE=>kkere 
+
+25-08-2025 18:45:14, ENV Write start: DB_USERNAME=>root 
+
+25-08-2025 18:45:14, ENV Write END: DB_USERNAME=>root 
+
+25-08-2025 18:45:14, ENV Write start: DB_PASSWORD=> 
+
+25-08-2025 18:45:14, ENV Write END: DB_PASSWORD=> 
+
+25-08-2025 18:45:14, ENV Write start: MAIL_HOST=>mailpit 
+
+25-08-2025 18:45:14, ENV Write END: MAIL_HOST=>mailpit 
+
+25-08-2025 18:45:14, ENV Write start: MAIL_PORT=>1025 
+
+25-08-2025 18:45:14, ENV Write END: MAIL_PORT=>1025 
+
+25-08-2025 18:45:14, ENV Write start: MAIL_USERNAME=> 
+
+25-08-2025 18:45:14, ENV Write END: MAIL_USERNAME=> 
+
+25-08-2025 18:45:14, ENV Write start: MAIL_PASSWORD=> 
+
+25-08-2025 18:45:14, ENV Write END: MAIL_PASSWORD=> 
+
+25-08-2025 18:45:14, ENV Write start: MAIL_FROM_ADDRESS=>hello@example.com 
+
+25-08-2025 18:45:14, ENV Write END: MAIL_FROM_ADDRESS=>hello@example.com 
+
+25-08-2025 18:45:14, ENV Write start: MAIL_FROM_NAME=>AdFox 
+
+25-08-2025 18:45:14, ENV Write END: MAIL_FROM_NAME=>AdFox 
+
+25-08-2025 18:45:14, ENV: Write setEnvValue successfully 
+
+25-08-2025 18:45:14, Step-2: Environment values updated successfully 
+
+25-08-2025 18:46:18, Step-3: Final installation process initiated 
+
+25-08-2025 18:46:18, Step-3: Saving installation info 
+
+25-08-2025 18:46:18, Step-3: Saving installation information to file 
+
+25-08-2025 18:46:18, Step-3: Installation information saved 
+
+25-08-2025 18:46:18, Step-3: Proceeding with database setup 
+
+25-08-2025 18:46:18, Step-3: Starting database migration and seeding 
+
+25-08-2025 18:47:36, Step-3: Database migration and seeding successful 
+
+25-08-2025 18:47:36, Step-3: Starting demo data seeding 
+
+25-08-2025 18:47:46, Step-3: Demo data seeded successfully 
+
+25-08-2025 18:47:46, Step-3: Creating admin account 
+
+25-08-2025 18:47:46, Step-3: Finalizing installation 
+
+25-08-2025 18:47:46, ENV: Write start from setEnvValue 
+
+25-08-2025 18:47:46, ENV Write start: APP_KEY=>base64:c2p1SzdHNjJ6Wmc4Vm9VNHJIRjdCS1ZQMlpvenBHbE8= 
+
+25-08-2025 18:47:46, ENV Write END: APP_KEY=>base64:c2p1SzdHNjJ6Wmc4Vm9VNHJIRjdCS1ZQMlpvenBHbE8= 
+
+25-08-2025 18:47:46, ENV: Write setEnvValue successfully 
+
+25-08-2025 18:47:46, Step-3: Installation complete 
+
