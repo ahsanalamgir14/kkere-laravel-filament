@@ -760,6 +760,11 @@ if (!function_exists('getVerificationFields')) {
 if (!function_exists('formatPriceWithCurrency')) {
     function formatPriceWithCurrency($price)
     {
+        // Handle null or empty price values
+        if ($price === null || $price === '') {
+            $price = 0;
+        }
+
         $currencySymbol = config('app.currency_symbol'); // Fetch currency symbol from config
         $locale = getPaymentSystemSetting('currency_locale') ?? 'en_US'; // Default to 'en_US' if not set
 
@@ -781,7 +786,7 @@ if (!function_exists('getOrderStatusColor')) {
             'order_received' => 'success',
             'order_cancelled' => 'danger',
             'order_rejected' => 'danger',
-            'order_not_received'=>'danger',
+            'order_not_received' => 'danger',
             default => 'info'
         };
     }
