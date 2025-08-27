@@ -340,8 +340,25 @@ class AdDetails extends Component implements HasForms
             return;
         }
 
-        // Get the WhatsApp number with proper fallback logic
-        $phoneNumber = $this->ad->whatsapp_number ?? $this->ad->user->whatsapp_number ?? $this->ad->user->phone_number;
+        // Get the WhatsApp number with proper fallback logic - prioritize ad's contact details
+        $phoneNumber = null;
+
+        // First check if ad has WhatsApp number and it's enabled for display
+        if ($this->ad->whatsapp_number && $this->ad->display_whatsapp) {
+            $phoneNumber = $this->ad->whatsapp_number;
+        }
+        // Then check if ad has phone number and it's enabled for display
+        elseif ($this->ad->phone_number && $this->ad->display_phone) {
+            $phoneNumber = $this->ad->phone_number;
+        }
+        // Fallback to user's WhatsApp number
+        elseif ($this->ad->user->whatsapp_number) {
+            $phoneNumber = $this->ad->user->whatsapp_number;
+        }
+        // Final fallback to user's phone number
+        else {
+            $phoneNumber = $this->ad->user->phone_number;
+        }
 
         // Check if we have a valid phone number
         if (empty($phoneNumber)) {
