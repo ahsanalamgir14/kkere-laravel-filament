@@ -341,13 +341,58 @@ class AdOverview extends Component implements HasForms
             return;
         }
 
-        // Construct the WhatsApp URL
-        $phoneNumber = is_vehicle_rental_active() ? $this->ad->user->whatsapp_number : $this->ad->whatsapp_number;
+        // Get the WhatsApp number with proper fallback logic
+        $phoneNumber = $this->ad->whatsapp_number ?? $this->ad->user->whatsapp_number ?? $this->ad->user->phone_number;
+
+        // Check if we have a valid phone number
+        if (empty($phoneNumber)) {
+            Notification::make()
+                ->title(__('messages.t_no_whatsapp_number_available'))
+                ->danger()
+                ->send();
+            return;
+        }
+
+        // Clean and format the phone number for WhatsApp
+        $phoneNumber = $this->formatPhoneNumberForWhatsApp($phoneNumber);
 
         $whatsappUrl = "https://wa.me/" . $phoneNumber . "/?text=" . urlencode($this->ad->title);
 
         // Redirect to the WhatsApp URL
         return redirect()->away($whatsappUrl);
+    }
+
+    /**
+     * Format phone number for WhatsApp API
+     */
+    private function formatPhoneNumberForWhatsApp($phoneNumber)
+    {
+        // Remove all non-numeric characters except plus sign
+        $phoneNumber = preg_replace('/[^0-9+]/', '', $phoneNumber);
+
+        // If it starts with +, remove it and process
+        $hasPlus = false;
+        if (strpos($phoneNumber, '+') === 0) {
+            $hasPlus = true;
+            $phoneNumber = substr($phoneNumber, 1);
+        }
+
+        // Remove leading zeros
+        $phoneNumber = ltrim($phoneNumber, '0');
+
+        // If the number is less than 10 digits, it's likely a local number
+        // Add default country code (you can make this configurable)
+        if (strlen($phoneNumber) < 10) {
+            $phoneNumber = '1' . $phoneNumber; // Default to US (+1)
+        }
+
+        // Ensure it's a valid international format
+        if (strlen($phoneNumber) >= 10 && strlen($phoneNumber) <= 15) {
+            return $phoneNumber;
+        }
+
+        // If still not valid, return original with plus
+        return $hasPlus ? '+' . $phoneNumber : $phoneNumber;
     }
 
     #[On('startDate')]
