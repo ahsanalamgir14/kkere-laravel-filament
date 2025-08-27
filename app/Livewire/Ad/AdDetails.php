@@ -44,7 +44,7 @@ use Livewire\Attributes\On;
 
 class AdDetails extends Component implements HasForms
 {
-    use SEOToolsTrait,InteractsWithForms,StoresTrafficAndUtm;
+    use SEOToolsTrait, InteractsWithForms, StoresTrafficAndUtm;
 
     // Properties
     public $ad;
@@ -168,8 +168,8 @@ class AdDetails extends Component implements HasForms
         $this->setDescriptionHtml();
         $this->fetchFieldDetails();
         $this->checkFavouriteStatus();
-        if($this->ad){
-            $this->storeUtmData($this->ad,request());
+        if ($this->ad) {
+            $this->storeUtmData($this->ad, request());
         }
     }
 
@@ -238,7 +238,7 @@ class AdDetails extends Component implements HasForms
      */
     protected function transformFieldValue($adFieldValue)
     {
-        if(!$adFieldValue->field){
+        if (!$adFieldValue->field) {
             return [];
         }
         $fieldType = $adFieldValue->field->type->value;
@@ -341,7 +341,9 @@ class AdDetails extends Component implements HasForms
         }
 
         // Construct the WhatsApp URL
-        $whatsappUrl = "https://wa.me/" . $this->ad->user->whatsapp_number . "/?text=" . urlencode($this->ad->title);
+        $phoneNumber = is_vehicle_rental_active() ? $this->ad->user->whatsapp_number : $this->ad->whatsapp_number;
+
+        $whatsappUrl = "https://wa.me/" . $phoneNumber . "/?text=" . urlencode($this->ad->title);
 
         // Redirect to the WhatsApp URL
         return redirect()->away($whatsappUrl);
@@ -535,10 +537,11 @@ class AdDetails extends Component implements HasForms
      * Save data of interaction who contact via ad details page
      * @return void
      */
-    public function saveContactInteraction($interactionType){
+    public function saveContactInteraction($interactionType)
+    {
         $this->ad->adInteractions()->create([
-            'user_id'=>auth()->id(),
-            'interaction_type'=>$interactionType
+            'user_id' => auth()->id(),
+            'interaction_type' => $interactionType
         ]);
     }
 
@@ -692,7 +695,7 @@ class AdDetails extends Component implements HasForms
             return;
         }
         $data = $this->form->getState();
-        if(isset($data['reason'])){
+        if (isset($data['reason'])) {
             // Create a new reported ad record
             ReportedAd::create([
                 'user_id' => Auth::id(),
@@ -771,7 +774,7 @@ class AdDetails extends Component implements HasForms
             $cart = session()->get('cart', []);
 
             $cart[] = [
-                'cart_id'=>(string) Str::uuid(),
+                'cart_id' => (string) Str::uuid(),
                 'vendor_id' => $this->ad->user_id,
                 'ad_id' => $this->ad->id,
                 'quantity' => $this->cartQuantity,
@@ -834,18 +837,20 @@ class AdDetails extends Component implements HasForms
      * @return void
      */
     #[On('saveTimeSpend')]
-    public function saveTimeSpend($timeSpentInSeconds){
-        $userSpendTimeData=[
-            'time_spent_in_secs'=>$timeSpentInSeconds,
-            'ip_address'=> getClientIp(),
+    public function saveTimeSpend($timeSpentInSeconds)
+    {
+        $userSpendTimeData = [
+            'time_spent_in_secs' => $timeSpentInSeconds,
+            'ip_address' => getClientIp(),
             'user_id' => auth()->id(),     // Include user agent
         ];
 
-        UpdateUserSpendTime::dispatch($userSpendTimeData,$this->ad,);
+        UpdateUserSpendTime::dispatch($userSpendTimeData, $this->ad,);
     }
 
     #[On('websiteURLClicked')]
-    public function websiteURLClicked(){
+    public function websiteURLClicked()
+    {
         $this->saveContactInteraction(AdInteractionType::EXTERNALLINKCLICK);
     }
 

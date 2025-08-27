@@ -342,7 +342,9 @@ class AdOverview extends Component implements HasForms
         }
 
         // Construct the WhatsApp URL
-        $whatsappUrl = "https://wa.me/" . $this->ad->user->whatsapp_number . "/?text=" . urlencode($this->ad->title);
+        $phoneNumber = is_vehicle_rental_active() ? $this->ad->user->whatsapp_number : $this->ad->whatsapp_number;
+
+        $whatsappUrl = "https://wa.me/" . $phoneNumber . "/?text=" . urlencode($this->ad->title);
 
         // Redirect to the WhatsApp URL
         return redirect()->away($whatsappUrl);
@@ -613,12 +615,11 @@ class AdOverview extends Component implements HasForms
 
             if (hasMultipleAdTypes())
                 $this->breadcrumbs[generate_category_url($this->ad->adType, null)] = $this->ad->adType?->name;
-            if($category)
-            {
+            if ($category) {
                 $this->breadcrumbs[generate_category_url($this->ad->adType, $category)] = $category->name;
             }
 
-            if($subCategory){
+            if ($subCategory) {
                 $this->breadcrumbs[generate_category_url($this->ad->adType, $category, $subCategory)] = $subCategory->name;
             }
         }
@@ -780,7 +781,7 @@ class AdOverview extends Component implements HasForms
     public function addToCart()
     {
 
-        if(auth()->id() == $this->ad->user_id){
+        if (auth()->id() == $this->ad->user_id) {
             Notification::make()
                 ->title(__('messages.t_cannot_buy_own_ad'))
                 ->danger()
@@ -799,7 +800,7 @@ class AdOverview extends Component implements HasForms
                         ->title(__('messages.t_cart_max_limit_reached', ['max' => getECommerceMaximumQuantityPerItem()]))
                         ->warning()
                         ->send();
-                        return;
+                    return;
                 }
 
                 $totalQuantity = $cart->quantity + $this->cartQuantity;
@@ -826,9 +827,6 @@ class AdOverview extends Component implements HasForms
                     ->success()
                     ->send();
             }
-
-
-
         } else {
             $cart = session()->get('cart', []);
 
@@ -867,7 +865,7 @@ class AdOverview extends Component implements HasForms
 
     public function buyNow()
     {
-        if(auth()->id() == $this->ad->user_id){
+        if (auth()->id() == $this->ad->user_id) {
             Notification::make()
                 ->title(__('messages.t_cannot_buy_own_ad'))
                 ->danger()
@@ -933,7 +931,7 @@ class AdOverview extends Component implements HasForms
             'user_id' => auth()->id(),     // Include user agent
         ];
 
-        UpdateUserSpendTime::dispatch($userSpendTimeData, $this->ad, );
+        UpdateUserSpendTime::dispatch($userSpendTimeData, $this->ad,);
     }
 
     #[On('websiteURLClicked')]

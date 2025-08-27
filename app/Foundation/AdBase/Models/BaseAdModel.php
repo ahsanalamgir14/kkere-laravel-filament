@@ -60,7 +60,7 @@ class BaseAdModel extends Model implements Sitemapable, HasMedia
         'image_properties' => 'array',
         'view_history' => 'array',
         'posted_date' => 'datetime',
-        'description_tiptap'=>'array'
+        'description_tiptap' => 'array'
     ];
 
     protected $fillable = [
@@ -158,12 +158,13 @@ class BaseAdModel extends Model implements Sitemapable, HasMedia
 
     public function category()
     {
-        return $this->belongsTo(Category::class,'category_id');
+        return $this->belongsTo(Category::class, 'category_id');
     }
 
     public function getPrimaryImageAttribute(): ?string
     {
-        $imageUrl = $this->getFirstMediaUrl('ads', 'thumb');
+        // Use original image size directly (no conversions)
+        $imageUrl = $this->getFirstMediaUrl('ads');
         // Check if the image URL is not empty
         if (!empty($imageUrl)) {
             return $imageUrl;
@@ -200,16 +201,26 @@ class BaseAdModel extends Model implements Sitemapable, HasMedia
 
         $watermarkImagePath = getSettingMediaUrl('watermark.watermark_image', 'watermark', public_path('images/watermark.png'), true);
 
+                        // Use original image size for thumbnails (no resizing)
         $this->addMediaConversion('thumb')
-        ->fit(Fit::Crop, 200, 200)
+        ->quality(95)
+        ->sharpen(10)
+        ->contrast(5)
         ->nonQueued();
 
-    $mediaPath = $media->getPath();
+        // Use original image size for listing thumbnails (no resizing)
+        $this->addMediaConversion('listing-thumb')
+        ->quality(95)
+        ->sharpen(10)
+        ->contrast(5)
+        ->nonQueued();
 
-    if (!File::exists($mediaPath)) {
-        \Log::error("Failed to read image file: {$mediaPath}");
-        return;
-    }
+        $mediaPath = $media->getPath();
+
+        if (!File::exists($mediaPath)) {
+            \Log::error("Failed to read image file: {$mediaPath}");
+            return;
+        }
 
         if ($watermarkSettings->enable_watermark) {
             $alignPosition = match ($watermarkSettings->position) {

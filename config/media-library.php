@@ -112,7 +112,7 @@ return [
      */
     'image_optimizers' => [
         Spatie\ImageOptimizer\Optimizers\Jpegoptim::class => [
-            '-m85', // set maximum quality to 85%
+            '-m90', // set maximum quality to 90%
             '--force', // ensure that progressive generation is always done also if a little bigger
             '--strip-all', // this strips out all text information such as comments and EXIF data
             '--all-progressive', // this will make sure the resulting image is a progressive one
@@ -136,7 +136,7 @@ return [
             '-m 6', // for the slowest compression method in order to get the best compression.
             '-pass 10', // for maximizing the amount of analysis pass.
             '-mt', // multithreading for some speed improvements.
-            '-q 90', //quality factor that brings the least noticeable changes.
+            '-q 95', //quality factor that brings the least noticeable changes.
         ],
         Spatie\ImageOptimizer\Optimizers\Avifenc::class => [
             '-a cq-level=23', // constant quality level, lower values mean better quality and greater file size (0-63).
