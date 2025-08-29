@@ -307,33 +307,8 @@ class AdOverview extends Component implements HasForms
      */
     public function chatWithWhatsapp()
     {
-        // Check if the user is authenticated
-        if (!auth()->check()) {
-            Notification::make()
-                ->title(__('messages.t_must_be_logged_to_chat'))
-                ->danger()
-                ->send();
-            return redirect(route('login'));
-        }
-
-        // Check if user verification is required to post ads or chat
-        $verificationRequired = app(AdSettings::class)->user_verification_required;
-        $user = auth()->user();
-
-        if ($verificationRequired && (!$user || !$user->verified)) {
-            // Redirect to a verification required page if the user is not verified
-            Notification::make()
-                ->title(__('messages.t_verification_required_to_chat'))
-                ->danger()
-                ->send();
-            return redirect()->route('verification-required');
-        }
-
-        // Get the authenticated user's ID
-        $buyerId = Auth::id();
-
-        // Prevent the owner of the ad from chatting with themselves
-        if ($buyerId == $this->ad->user_id) {
+        // Prevent the owner of the ad from chatting with themselves (if logged in)
+        if (auth()->check() && auth()->id() == $this->ad->user_id) {
             Notification::make()
                 ->title(__('messages.t_cannot_chat_with_yourself'))
                 ->danger()
@@ -373,7 +348,11 @@ class AdOverview extends Component implements HasForms
         // Clean and format the phone number for WhatsApp
         $phoneNumber = $this->formatPhoneNumberForWhatsApp($phoneNumber);
 
-        $whatsappUrl = "https://wa.me/" . $phoneNumber . "/?text=" . urlencode($this->ad->title);
+        // Create the French WhatsApp message with ad link
+        $adLink = route('ad.overview', ['slug' => $this->ad->slug]);
+        $whatsappMessage = "Je suis intéressé par votre annonce sur kkere {$adLink}. Est-ce toujours disponible ?";
+
+        $whatsappUrl = "https://wa.me/" . $phoneNumber . "/?text=" . urlencode($whatsappMessage);
 
         // Redirect to the WhatsApp URL
         return redirect()->away($whatsappUrl);

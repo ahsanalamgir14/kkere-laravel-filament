@@ -91,15 +91,15 @@
 
         @php
         $canRevealPhone = $phoneSettings->enable_phone && ($phoneSettings->enable_login_user_number_reveal ? auth()->check() : true);
-        $phoneNumber = is_vehicle_rental_active() ? $ad->user->phone_number : $ad->phone_number && $ad->display_phone;
-        $whatsappNumber = is_vehicle_rental_active() ? $ad->user->whatsapp_number : $ad->whatsapp_number && $ad->display_whatsapp;
+        $phoneNumber = is_vehicle_rental_active() ? $ad->user->phone_number : ($ad->phone_number && $ad->display_phone ? $ad->phone_number : null);
+        $whatsappNumber = is_vehicle_rental_active() ? $ad->user->whatsapp_number : ($ad->whatsapp_number && $ad->display_whatsapp ? $ad->whatsapp_number : null);
         @endphp
 
         @if ($canRevealPhone && $phoneNumber)
         <x-ad.phone :phoneNumber="is_vehicle_rental_active() ? $ad->user->phone_number : $ad->phone_number" />
         @endif
 
-        @if ($phoneSettings->enable_whatsapp && $whatsappNumber && $revealed)
+        @if ($phoneSettings->enable_whatsapp && $whatsappNumber)
         <x-button wire:click="chatWithWhatsapp()" size="lg"
             class="w-full bg-gray-50 py-1 px-2 !flex !justify-start mt-4 border-gray-200 classic:border-black text-black dark:bg-[#90EE90]">
             <span class="!flex !justify-start p-1 gap-x-2">

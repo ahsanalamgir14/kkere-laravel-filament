@@ -202,48 +202,23 @@ class SellerInfo extends Component
         ]);
 
         Notification::make()
-        ->title(__('Seller contact information is now visible'))
-        ->success()
-        ->send();
+            ->title(__('Seller contact information is now visible'))
+            ->success()
+            ->send();
     }
 
     public function stopDuplicateReveal()
     {
         $phoneNumber = ContactAnalytic::where('ad_id', $this->ad->id)->where('user_id', auth()->id())->count();
-        if($phoneNumber){
+        if ($phoneNumber) {
             $this->revealed = true;
         }
     }
 
     public function chatWithWhatsapp()
     {
-        // Check if the user is authenticated
-        // if (!auth()->check()) {
-        //     Notification::make()
-        //         ->title(__('messages.t_must_be_logged_to_chat'))
-        //         ->danger()
-        //         ->send();
-        //     return redirect(route('login'));
-        // }
-
-        // // Check if user verification is required to post ads or chat
-        // $verificationRequired = app(AdSettings::class)->user_verification_required;
-        // $user = auth()->user();
-
-        // if ($verificationRequired && (!$user || !$user->verified)) {
-        //     // Redirect to a verification required page if the user is not verified
-        //     Notification::make()
-        //         ->title(__('messages.t_verification_required_to_chat'))
-        //         ->danger()
-        //         ->send();
-        //     return redirect()->route('verification-required');
-        // }
-
-        // Get the authenticated user's ID
-        $buyerId = Auth::id();
-
-        // Prevent the owner of the ad from chatting with themselves
-        if ($buyerId == $this->ad->user_id) {
+        // Prevent the owner of the ad from chatting with themselves (if logged in)
+        if (auth()->check() && auth()->id() == $this->ad->user_id) {
             Notification::make()
                 ->title(__('messages.t_cannot_chat_with_yourself'))
                 ->danger()
@@ -251,13 +226,79 @@ class SellerInfo extends Component
             return;
         }
 
-        // Construct the WhatsApp URL
-        $phoneNumber = is_vehicle_rental_active() ? $this->ad->user->whatsapp_number : $this->ad->whatsapp_number;
+        // Get the WhatsApp number with proper fallback logic - prioritize ad's contact details
+        $phoneNumber = null;
 
-        $whatsappUrl = "https://wa.me/" . $phoneNumber . "/?text=" . urlencode($this->ad->title);
+        // First check if ad has WhatsApp number and it's enabled for display
+        if ($this->ad->whatsapp_number && $this->ad->display_whatsapp) {
+            $phoneNumber = $this->ad->whatsapp_number;
+        }
+        // Then check if ad has phone number and it's enabled for display
+        elseif ($this->ad->phone_number && $this->ad->display_phone) {
+            $phoneNumber = $this->ad->phone_number;
+        }
+        // Fallback to user's WhatsApp number
+        elseif ($this->ad->user->whatsapp_number) {
+            $phoneNumber = $this->ad->user->whatsapp_number;
+        }
+        // Final fallback to user's phone number
+        else {
+            $phoneNumber = $this->ad->user->phone_number;
+        }
+
+        // Check if we have a valid phone number
+        if (empty($phoneNumber)) {
+            Notification::make()
+                ->title(__('messages.t_no_whatsapp_number_available'))
+                ->danger()
+                ->send();
+            return;
+        }
+
+        // Clean and format the phone number for WhatsApp
+        $phoneNumber = $this->formatPhoneNumberForWhatsApp($phoneNumber);
+
+        // Create the French WhatsApp message with ad link
+        $adLink = route('ad.overview', ['slug' => $this->ad->slug]);
+        $whatsappMessage = "Je suis intéressé par votre annonce sur kkere {$adLink}. Est-ce toujours disponible ?";
+
+        $whatsappUrl = "https://wa.me/" . $phoneNumber . "/?text=" . urlencode($whatsappMessage);
 
         // Redirect to the WhatsApp URL
         return redirect()->away($whatsappUrl);
+    }
+
+    /**
+     * Format phone number for WhatsApp API
+     */
+    private function formatPhoneNumberForWhatsApp($phoneNumber)
+    {
+        // Remove all non-numeric characters except plus sign
+        $phoneNumber = preg_replace('/[^0-9+]/', '', $phoneNumber);
+
+        // If it starts with +, remove it and process
+        $hasPlus = false;
+        if (strpos($phoneNumber, '+') === 0) {
+            $hasPlus = true;
+            $phoneNumber = substr($phoneNumber, 1);
+        }
+
+        // Remove leading zeros
+        $phoneNumber = ltrim($phoneNumber, '0');
+
+        // If the number is less than 10 digits, it's likely a local number
+        // Add default country code (you can make this configurable)
+        if (strlen($phoneNumber) < 10) {
+            $phoneNumber = '1' . $phoneNumber; // Default to US (+1)
+        }
+
+        // Ensure it's a valid international format
+        if (strlen($phoneNumber) >= 10 && strlen($phoneNumber) <= 15) {
+            return $phoneNumber;
+        }
+
+        // If still not valid, return original with plus
+        return $hasPlus ? '+' . $phoneNumber : $phoneNumber;
     }
 
     /**
