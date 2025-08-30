@@ -1,4 +1,5 @@
 <?php
+
 namespace App\Foundation\AdBase\Traits;
 
 use App\Settings\GeneralSettings;
@@ -11,7 +12,8 @@ use Closure;
 use Propaganistas\LaravelPhone\Rules\Phone as PhoneRule;
 use Illuminate\Support\Facades\Validator;
 
-trait HasContactFields {
+trait HasContactFields
+{
 
     /**
      * Get display phone toggle
@@ -50,7 +52,7 @@ trait HasContactFields {
             ->required()
             ->live()
             ->rules([
-                fn (): Closure => function (string $attribute, $value, Closure $fail) {
+                fn(): Closure => function (string $attribute, $value, Closure $fail) {
                     $country = 'AUTO'; // Dynamically fetch if needed
 
                     $validator = Validator::make(
@@ -74,7 +76,9 @@ trait HasContactFields {
     public function getSameNumberToggle()
     {
         return ToggleButtons::make('display_whatsapp')
-            ->label(__('messages.t_display_whatsapp_number'))
+            ->label(__('messages.t_display_whatsapp_number') . ' *')
+            ->default(true) // Always default to true to make WhatsApp mandatory
+            ->helperText(__('messages.t_whatsapp_number_required'))
             ->afterStateUpdated(function ($state, Get $get, Set $set) {
                 // Update whatsapp_number when display_whatsapp is toggled
                 if ($state) {
@@ -99,13 +103,14 @@ trait HasContactFields {
     {
         return PhoneInput::make('whatsapp_number')
             ->initialCountry(app(GeneralSettings::class)->default_mobile_country ?? 'us')
-            ->placeholder(__('messages.t_enter_phone_number'))
-            ->helperText(__('messages.t_display_whatsapp_helper_text'))
+            ->placeholder(__('messages.t_enter_whatsapp_number'))
+            ->helperText(__('messages.t_whatsapp_number_required'))
             ->live()
             ->required()
             ->visible(app(PhoneSettings::class)->enable_whatsapp)
             ->rules([
-                fn (): Closure => function (string $attribute, $value, Closure $fail) {
+                'required',
+                fn(): Closure => function (string $attribute, $value, Closure $fail) {
                     $country = 'AUTO'; // Dynamically fetch if needed
 
                     $validator = Validator::make(
@@ -118,6 +123,6 @@ trait HasContactFields {
                     }
                 },
             ])
-             ->hidden(fn(Get $get): bool => !$get('display_whatsapp'));
+            ->hidden(fn(Get $get): bool => !$get('display_whatsapp'));
     }
 }

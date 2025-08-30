@@ -29,7 +29,6 @@ abstract class BaseAdDetail extends Component implements HasForms
 
             $this->loadAdDetails($this->id);
             $this->checkRequiredFieldsFilled();
-
         } else {
 
             //If ad type count is 1 then assign first ad type otherwise don't assign
@@ -37,7 +36,6 @@ abstract class BaseAdDetail extends Component implements HasForms
                 $this->ad_type_id = AdType::first()?->id ?? null;
             }
             $this->dispatch('required-fields-filled', ['isFilled' => false]);
-
         }
 
         $this->loadCategories($this->ad_type_id);
@@ -45,25 +43,23 @@ abstract class BaseAdDetail extends Component implements HasForms
 
     protected function loadCategories($adTypeId)
     {
-        if($adTypeId) {
-            $this->categories = Category::when($this->ad, function ($query) use($adTypeId) {
+        if ($adTypeId) {
+            $this->categories = Category::when($this->ad, function ($query) use ($adTypeId) {
                 $query->where('ad_type_id', $adTypeId);
             })
                 ->with('subcategories.subcategories')
                 ->whereNull('parent_id')
                 ->get();
-
-        }else{
+        } else {
             $this->categories = Category::with('subcategories.subcategories')
                 ->whereNull('parent_id')
                 ->get();
         }
-
     }
 
     protected function loadAdDetails($id)
     {
-        $this->ad = $this->model::with(['adType','category'])->find($id);
+        $this->ad = $this->model::with(['adType', 'category'])->find($id);
 
         if ($this->ad) {
             $this->fillAdDetails();
@@ -152,7 +148,6 @@ abstract class BaseAdDetail extends Component implements HasForms
         if ($this->ad->main_category_id) {
             $this->showMainCategories = false;
         }
-
     }
 
     protected function setAdTypeDetails()
@@ -160,8 +155,7 @@ abstract class BaseAdDetail extends Component implements HasForms
         if ($this->ad->type_id) {
             $this->disable_condition = $this->ad->adType?->disable_condition;
             $this->disable_price_type = $this->ad->adType?->disable_price_type;
-
-        }else{
+        } else {
             $this->disable_condition = false;
             $this->disable_price_type = false;
         }
@@ -236,7 +230,7 @@ abstract class BaseAdDetail extends Component implements HasForms
             $this->updateExistingAd($name, $value, $userId);
         }
 
-        if($name == 'ad_type_id'){
+        if ($name == 'ad_type_id') {
             // $this->main_category_id = null;
             // $this->parent_category = null;
             // $this->sub_category_id = null;
@@ -297,7 +291,7 @@ abstract class BaseAdDetail extends Component implements HasForms
             $this->updateAdSlug($ad->fresh(), $value);
         }
 
-        if($name == 'main_category_id'){
+        if ($name == 'main_category_id') {
             $this->sub_category_id = null;
             $this->category_id = null;
             $this->child_category_id = null;
@@ -326,8 +320,11 @@ abstract class BaseAdDetail extends Component implements HasForms
         if (isset($this->display_phone) && $this->display_phone && (!empty($this->phone_number))) {
             $isFilled = $isFilled ? true : false;
         }
-        if (isset($this->display_whatsapp) && $this->display_whatsapp && (!empty($this->whatsapp_number))) {
+        // WhatsApp is now always required
+        if (!empty($this->whatsapp_number)) {
             $isFilled = $isFilled ? true : false;
+        } else {
+            $isFilled = false;
         }
         // dump($isFilled);
         $this->dispatch('required-fields-filled', isFilled: $isFilled);

@@ -62,8 +62,8 @@ trait AdProperties
     public $enable_cash_on_delivery  = null;
 
     // Phone details
-    public $whatsapp_number = false;
-    public $display_whatsapp = null;
+    public $whatsapp_number = null;
+    public $display_whatsapp = true; // Default to true to make WhatsApp mandatory
 
     public $adType;
 

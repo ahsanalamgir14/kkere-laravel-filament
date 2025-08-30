@@ -33,7 +33,6 @@ class AdDetail extends Component implements HasForms
         if ($this->id) {
             $this->loadAdDetails($this->id);
             $this->checkRequiredFieldsFilled();
-
         } else {
 
             //If ad type count is 1 then assign first ad type otherwise don't assign
@@ -41,7 +40,6 @@ class AdDetail extends Component implements HasForms
                 $this->ad_type_id = AdType::first()?->id ?? null;
             }
             $this->dispatch('required-fields-filled', ['isFilled' => false]);
-
         }
         $this->loadCategories($this->ad_type_id);
     }
@@ -72,7 +70,6 @@ class AdDetail extends Component implements HasForms
             ->with('subcategories.subcategories')
             ->whereNull('parent_id')
             ->get();
-
     }
 
     protected function loadAdDetails($id)
@@ -171,7 +168,6 @@ class AdDetail extends Component implements HasForms
         if ($this->parent_category) {
             $this->showMainCategories = false;
         }
-
     }
 
     protected function setAdTypeDetails()
@@ -179,7 +175,6 @@ class AdDetail extends Component implements HasForms
         if ($this->ad->type_id) {
             $this->disable_condition = $this->ad->adType?->disable_condition;
             $this->disable_price_type = $this->ad->adType?->disable_price_type;
-
         } else {
             $this->disable_condition = false;
             $this->disable_price_type = false;
@@ -206,12 +201,10 @@ class AdDetail extends Component implements HasForms
             if (!$verifyResult) {
                 return;
             }
-
         } else {
             $this->verifyIdentity($categoryId, 'main_category_id');
         }
         $this->dispatch('ad-updated');
-
     }
 
 
@@ -267,7 +260,6 @@ class AdDetail extends Component implements HasForms
                 $this->showChildCategory = false;
                 return;
             }
-
         }
 
         if (!empty($categoryId)) {
@@ -294,7 +286,6 @@ class AdDetail extends Component implements HasForms
             $this->showMainCategories = false;
             $this->showChildCategory = true;
         }
-
     }
 
     /**
@@ -341,7 +332,6 @@ class AdDetail extends Component implements HasForms
         if ($checkChildCat) {
             $this->child_category_id = null;
         }
-
     }
     protected function updateAdSlug(Ad $ad, $title)
     {
@@ -403,7 +393,6 @@ class AdDetail extends Component implements HasForms
             if (!$this->id && $name == 'title') {
                 $this->createNewAd($name, $value, $userId);
             }
-
         } else {
             // Fetch the existing ad
             $ad = Ad::find($this->id);
@@ -452,14 +441,13 @@ class AdDetail extends Component implements HasForms
         } elseif ($name === 'title' && !$this->requiresAdminApproval($ad)) {
             $ad->update(['title' => $value]);
             $this->updateAdSlug($ad->fresh(), $value);
-        }elseif ($name === 'sub_category_id') {
+        } elseif ($name === 'sub_category_id') {
             $this->checkCookie($value, 'category_id');
-        }elseif ($name === 'child_category_id') {
+        } elseif ($name === 'child_category_id') {
             $this->checkCookie($value, $name);
-        }elseif (Str::startsWith($name, 'description') && !$this->requiresAdminApproval($ad)) {
+        } elseif (Str::startsWith($name, 'description') && !$this->requiresAdminApproval($ad)) {
             $ad->update(['description_tiptap' => $value ? $value : []]);
-        }
-        else {
+        } else {
             $ad->update([$name => $value ? $value : null]);
         }
         if (is_null($ad->sub_category_id)) {
@@ -468,9 +456,8 @@ class AdDetail extends Component implements HasForms
         if ($name === 'ad_type_id') {
             $this->updateAdTypeRelatedData($this->ad, $value);
         }
-        if($name == 'category_id' || $name == 'sub_category_id' || $name == 'child_category_id')
-        $this->dispatch('ad-updated');
-
+        if ($name == 'category_id' || $name == 'sub_category_id' || $name == 'child_category_id')
+            $this->dispatch('ad-updated');
     }
 
     /**
@@ -542,7 +529,7 @@ class AdDetail extends Component implements HasForms
     {
         $isFilled = false;
         foreach ($this->requiredFields as $field) {
-            if($field == "description_tiptap"){
+            if ($field == "description_tiptap") {
                 $isFilled = isset($this->description_tiptap) && count($this->description_tiptap);
                 break;
             }
@@ -556,8 +543,11 @@ class AdDetail extends Component implements HasForms
         if (isset($this->display_phone) && $this->display_phone && (!empty($this->phone_number))) {
             $isFilled = $isFilled ? true : false;
         }
-        if (isset($this->display_whatsapp) && $this->display_whatsapp && (!empty($this->whatsapp_number))) {
+        // WhatsApp is now always required
+        if (!empty($this->whatsapp_number)) {
             $isFilled = $isFilled ? true : false;
+        } else {
+            $isFilled = false;
         }
         $this->dispatch('required-fields-filled', isFilled: $isFilled);
     }
